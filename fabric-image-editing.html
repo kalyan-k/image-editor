@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Editing Feature with Fabric.js</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
+<style>
+  canvas {
+    border: 1px solid black;
+  }
+</style>
+</head>
+<body>
+  <h2>Image Editing Feature with Fabric.js</h2>
+  <label for="colorPicker">Select Rectangle Color:</label>
+  <input type="color" id="colorPicker" value="#ff0000">
+  <canvas id="imageCanvas" width="400" height="300"></canvas>
+  <script>
+    const canvas = new fabric.Canvas('imageCanvas');
+    let isDragging = false;
+    let originalMouseX, originalMouseY;
+
+    // Event listener for color picker change
+    document.getElementById('colorPicker').addEventListener('input', function(event) {
+      if (canvas.getActiveObject() && canvas.getActiveObject().type === 'rect') {
+        canvas.getActiveObject().set('fill', event.target.value);
+        canvas.renderAll();
+      }
+    });
+
+    // Event listener for canvas mouse down
+    canvas.on('mouse:down', function(event) {
+      if (event.target) return; // Return if the event target is an existing object
+      const pointer = canvas.getPointer(event.e);
+      originalMouseX = pointer.x;
+      originalMouseY = pointer.y;
+      isDragging = true;
+    });
+
+    // Event listener for canvas mouse move
+    canvas.on('mouse:move', function(event) {
+      if (!isDragging) return;
+      const pointer = canvas.getPointer(event.e);
+      const rectWidth = pointer.x - originalMouseX;
+      const rectHeight = pointer.y - originalMouseY;
+
+      let rect;
+      if (canvas.getActiveObject() && canvas.getActiveObject().type === 'rect') {
+        rect = canvas.getActiveObject();
+        rect.set('width', rectWidth);
+        rect.set('height', rectHeight);
+      } else {
+        rect = new fabric.Rect({
+          left: originalMouseX,
+          top: originalMouseY,
+          width: rectWidth,
+          height: rectHeight,
+          fill: '#ff0000',
+          strokeWidth: 2,
+          stroke: '#000000',
+          transparentCorners: false
+        });
+        canvas.add(rect);
+      }
+      canvas.renderAll();
+    });
+
+    // Event listener for canvas mouse up
+    canvas.on('mouse:up', function(event) {
+      isDragging = false;
+    });
+
+    // Event listener for keydown event
+    window.addEventListener('keydown', function(event) {
+      if (event.code === 'Delete' && canvas.getActiveObject()) {
+        canvas.remove(canvas.getActiveObject());
+        canvas.renderAll();
+      }
+    });
+  </script>
+</body>
+</html>
