@@ -1,83 +1,308 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Image Editing Feature with Fabric.js</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
-<style>
-  canvas {
-    border: 1px solid black;
-  }
-</style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Image Editing Feature with Fabric.js</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
+	<style>
+		canvas {
+			border: 1px solid black;
+		}
+	</style>
 </head>
+
 <body>
-  <h2>Image Editing Feature with Fabric.js</h2>
-  <label for="colorPicker">Select Rectangle Color:</label>
-  <input type="color" id="colorPicker" value="#ff0000">
-  <canvas id="imageCanvas" width="400" height="300"></canvas>
-  <script>
-    const canvas = new fabric.Canvas('imageCanvas');
-    let isDragging = false;
-    let originalMouseX, originalMouseY;
+	<h2>Image Editing Feature with Fabric.js</h2>
+	<label for="shapePicker">Please select the shape: </label>
+	<select name="shapePicker" id="shapePicker">
+		<option value=""></option>
+		<option value="rect">Rectangle</option>
+		<option value="circle">Circle</option>
+		<option value="line">Line</option>
+		<option value="arrow">Arrow</option>
+		<option value="pen">Pen</option>
+	</select>
+	<br>
+	<label for="colorPicker">Select Rectangle Color:</label>
+	<input type="color" id="colorPicker" value="#ff0000">
+	<br><br>
+	<canvas id="imageCanvas" width="400" height="300"></canvas>
+	<br>
+	<br>
+	<div>
+		<label id="mousePointer"></label>
+	</div>
+	<script>
+		const canvas = new fabric.Canvas('imageCanvas');
+		let isDragging = false;
+		let isMouseDown = false;
+		let originalMouseX, originalMouseY;
+		let rectWidth, rectHeight;
+		let shapeSelected = "";
+		let arrows = []; // Array to store arrows
+		let arrowLine, arrowhead;
 
-    // Event listener for color picker change
-    document.getElementById('colorPicker').addEventListener('input', function(event) {
-      if (canvas.getActiveObject() && canvas.getActiveObject().type === 'rect') {
-        canvas.getActiveObject().set('fill', event.target.value);
-        canvas.renderAll();
-      }
-    });
+		// Event listener for color picker change
+		// document.getElementById('colorPicker').addEventListener('input', function (event) {
+		//   if (canvas.getActiveObject() && canvas.getActiveObject().type === 'rect') {
+		//     canvas.getActiveObject().set('fill', event.target.value);
+		//     canvas.renderAll();
+		//   }
+		// });
 
-    // Event listener for canvas mouse down
-    canvas.on('mouse:down', function(event) {
-      if (event.target) return; // Return if the event target is an existing object
-      const pointer = canvas.getPointer(event.e);
-      originalMouseX = pointer.x;
-      originalMouseY = pointer.y;
-      isDragging = true;
-    });
+		// Event listener for canvas mouse down
+		canvas.on('mouse:down', function (event) {
+			if (event.target) return; // Return if the event target is an existing object
+			const pointer = canvas.getPointer(event.e);
+			originalMouseX = pointer.x;
+			originalMouseY = pointer.y;
 
-    // Event listener for canvas mouse move
-    canvas.on('mouse:move', function(event) {
-      if (!isDragging) return;
-      const pointer = canvas.getPointer(event.e);
-      const rectWidth = pointer.x - originalMouseX;
-      const rectHeight = pointer.y - originalMouseY;
+			isMouseDown = true;
+			isDragging = false;
 
-      let rect;
-      if (canvas.getActiveObject() && canvas.getActiveObject().type === 'rect') {
-        rect = canvas.getActiveObject();
-        rect.set('width', rectWidth);
-        rect.set('height', rectHeight);
-      } else {
-        rect = new fabric.Rect({
-          left: originalMouseX,
-          top: originalMouseY,
-          width: rectWidth,
-          height: rectHeight,
-          fill: '#ff0000',
-          strokeWidth: 2,
-          stroke: '#000000',
-          transparentCorners: false
-        });
-        canvas.add(rect);
-      }
-      canvas.renderAll();
-    });
+			const color = document.getElementById('colorPicker');
+			const shape = document.getElementById('shapePicker');
+			if (!shape || (!!shape && !shape.value)) {
+				alert("Please select a shape first");
+			}
 
-    // Event listener for canvas mouse up
-    canvas.on('mouse:up', function(event) {
-      isDragging = false;
-    });
+			if (shape.value === 'arrow') {
+				const points = [pointer.x, pointer.y, pointer.x, pointer.y];
+				// const arrow = new fabric.Line(points, {
+				// 	stroke: color.value,
+				// 	strokeWidth: 2,
+				// 	selectable: true,
+				// 	evented: true
+				// });
 
-    // Event listener for keydown event
-    window.addEventListener('keydown', function(event) {
-      if (event.code === 'Delete' && canvas.getActiveObject()) {
-        canvas.remove(canvas.getActiveObject());
-        canvas.renderAll();
-      }
-    });
-  </script>
+				// const arrow = new fabric.Arrow([pointer.x, pointer.y, pointer.x, pointer.y], {
+				// 	stroke: color.value,
+				// 	strokeWidth: 2,
+				// 	selectable: true,
+				// 	evented: true,
+				// 	angle: 45,
+				// 	headLength: 10,
+				// 	headWidth: 10,
+				// });
+
+				// const arrow = new fabric.Path('M 0 0 L 20 0 L 15 10 L 20 0 L 15 -10 Z', {
+				// 	left: pointer.x,
+				// 	top: pointer.y,
+				// 	fill: 'black',
+				// 	stroke: color.value,
+				// 	strokeWidth: 2,
+				// 	selectable: true,
+				// 	evented: true,
+				// });
+
+				// arrow.setControlsVisibility({ mtr: false });
+				// canvas.add(arrow);
+
+				arrowLine = new fabric.Line(points, {
+					stroke: color.value,
+					strokeWidth: 2,
+					selectable: true,
+					evented: true,
+				});
+
+				arrowhead = new fabric.Polygon([{ x: 0, y: 0 }, { x: -20, y: -10 }, { x: -20, y: 10 }], {
+					width: 10,
+					height: 10,
+					fill: 'black',
+					left: pointer.x, // + 40,
+					top: pointer.y, // + 40,
+					//angle: 45,
+					originX: 'center',
+					originY: 'center'
+				});
+
+				canvas.add(arrowLine, arrowhead);
+				//arrows.push(arrow); // Add the arrow to the array
+				canvas.renderAll();
+			}
+		});
+
+		// Event listener for canvas mouse move
+		canvas.on('mouse:move', function (event) {
+			const mousePointer = document.getElementById("mousePointer");
+			mousePointer.innerText = `Mouse-X: ${event.e.clientX}, Mouse-y: ${event.e.clientX}`;
+
+			if (isMouseDown) isDragging = true;
+			if (!isDragging) return;
+
+			const shape = document.getElementById('shapePicker');
+			if (!!shape && shape.value === "arrow") {
+				// const pointer = canvas.getPointer(event.e);
+				// const arrow = arrows[arrows.length - 1]; // Get the most recently added arrow
+				// arrow.set({ x2: pointer.x, y2: pointer.y });
+				// canvas.renderAll();
+
+				// const pointer = canvas.getPointer(event.e);
+				// const arrow = arrows[arrows.length - 1]; // Get the most recently added arrow
+				// const deltaX = pointer.x - arrow.left;
+				// const deltaY = pointer.y - arrow.top;
+				// const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+				// arrow.set({ angle: angle });
+				// arrow.set({ width: Math.sqrt(deltaX * deltaX + deltaY * deltaY) });
+				// canvas.renderAll();
+
+				const pointer = canvas.getPointer(event.e);
+				arrowLine.set({ x2: pointer.x, y2: pointer.y });
+
+
+				let x1 = arrowLine.x1;
+				let y1 = arrowLine.y1;
+				let x2 = pointer.x;
+				let y2 = pointer.y;
+				let verticalHeight = Math.abs(y2 - y1);
+				let horizontalWidth = Math.abs(x2 - x1);
+				let tanRatio = verticalHeight / horizontalWidth;
+				let baseAngle = Math.atan(tanRatio) * 180 / Math.PI;
+
+				arrowhead.set({ left: pointer.x, top: pointer.y });
+
+				if (x2 > x1 && y2 < y1) {
+					arrowhead.set({ angle: -baseAngle });
+				}
+				else if (x2 > x1 && y2 === y1) {
+					arrowhead.set({ angle: 0 });
+				}
+				else if (x2 > x1 && y2 > y1) {
+					arrowhead.set({ angle: baseAngle });
+				}
+				else if (x2 < x1 && y2 > y1) {
+					arrowhead.set({ angle: 180 - baseAngle });
+				}
+				else if (x2 < x1 && y2 == y1) {
+					arrowhead.set({ angle: 180 });
+				}
+				else if (x2 < x1 && y2 < y1) {
+					arrowhead.set({ angle: 180 + baseAngle });
+				}
+
+				//arrowLine.setCords();
+				//arrowhead.setCords();
+				canvas.renderAll();
+			}
+			else {
+				const currentPoint = canvas.getPointer(event.e);
+				line.set({ x2: currentPoint.x, y2: currentPoint.y });
+				canvas.renderAll();
+			}
+		});
+
+		// Event listener for canvas mouse up
+		canvas.on('mouse:up', function (event) {
+			const pointer = canvas.getPointer(event.e);
+			isMouseDown = false;
+			const color = document.getElementById('colorPicker');
+			const shape = document.getElementById('shapePicker');
+
+			if (!!shape && !!shape.value) {
+				let rect, circle;
+				if (isDragging) {
+					// if (canvas.getActiveObject() && canvas.getActiveObject().type === 'rect') {
+					//   rect = canvas.getActiveObject();
+					//   rectWidth = pointer.x - originalMouseX + rectWidth;
+					//   rectHeight = pointer.y - originalMouseY + rectHeight;
+					//   rect.set('width', rectWidth);
+					//   rect.set('height', rectHeight);
+					// } else {
+					rectWidth = pointer.x - originalMouseX;
+					rectHeight = pointer.y - originalMouseY;
+
+					shapeSelected = shape.value;
+
+					if (shape.value === 'rect') {
+						rect = new fabric.Rect({
+							left: originalMouseX,
+							top: originalMouseY,
+							width: rectWidth,
+							height: rectHeight,
+							fill: 'transparent',
+							strokeWidth: 2,
+							stroke: color.value,
+							//transparentCorners: false,
+							//backgroundColor: '#FFFFF'
+						});
+						canvas.add(rect);
+					}
+					else if (shape.value === 'circle') {
+						let dx = Math.abs(pointer.x - originalMouseX);
+						let dy = Math.abs(pointer.y - originalMouseY);
+						let radius = Math.sqrt(dx * dx + dy * dy) / 2; // Math.abs(Math.floor(dx / 2));
+						const centerX = (pointer.x + originalMouseX) / 2;
+						const centerY = (pointer.y + originalMouseY) / 2;
+
+						console.log(`dx: ${dx}, dy: ${dy} and radius is - ${radius}`);
+
+						circle = new fabric.Circle({
+							radius: radius, // Radius of the circle
+							fill: 'transparent', // Fill color
+							left: centerX - radius, // originalMouseX > pointer.x ? originalMouseX : pointer.x, // Left position
+							top: centerY - radius, // originalMouseY > pointer.y ? originalMouseY : pointer.y, // Top position
+							strokeWidth: 2,
+							stroke: color.value,
+						});
+						canvas.add(circle);
+					}
+					else if (shape.value === 'line') {
+						const line = new fabric.Line([originalMouseX, originalMouseY, pointer.x, pointer.y], {
+							fill: 'transparent',
+							strokeWidth: 2,
+							stroke: color.value
+							//selectable: false
+						});
+						canvas.add(line);
+					}
+				}
+				// }
+
+				if (shape.value === 'arrow') {
+					const pointer = canvas.getPointer(event.e);
+					const targetArrow = getArrowAtPosition(pointer.x, pointer.y);
+					console.log('Selected arrow:', targetArrow);
+				}
+				canvas.renderAll();
+			}
+			else {
+				alert("Please select a shape first");
+			}
+
+			rectWidth = rectHeight = 0;
+			isDragging = false;
+		});
+
+		function getArrowAtPosition(x, y) {
+			for (let i = arrows.length - 1; i >= 0; i--) {
+				const arrow = arrows[i];
+				const boundingBox = arrow.getBoundingRect();
+				if (x >= boundingBox.left && x <= boundingBox.left + boundingBox.width &&
+					y >= boundingBox.top && y <= boundingBox.top + boundingBox.height) {
+					return arrow;
+				}
+			}
+			return null;
+		}
+
+		// Event listener for keydown event
+		window.addEventListener('keydown', function (event) {
+			if (event.code === 'Delete' && canvas.getActiveObject()) {
+				canvas.remove(canvas.getActiveObject());
+				canvas.renderAll();
+			}
+		});
+
+		// Enable selection of the line after creation
+		canvas.on('object:moving', function (event) {
+			const obj = event.target;
+			// Adjust the starting and ending points of the line as it's moved
+			const points = [obj.x1, obj.y1, obj.x2, obj.y2];
+			obj.set({ x1: points[0], y1: points[1], x2: points[2], y2: points[3] });
+		});
+	</script>
 </body>
+
 </html>
