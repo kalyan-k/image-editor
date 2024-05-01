@@ -1,0 +1,74 @@
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>Drawing App JavaScript | CodingNepal</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="script.js" defer=""></script>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="tools-board my-2 flex" style="
+    background: #fff;
+">
+            <div class="container">
+
+                <div class="options col-8">
+                    <div class="option tool row" id="rectangle">
+                        <img src="icons/rectangle.svg" alt="">
+                        <span>Rectangle</span>
+                    </div>
+                    <div class="option tool row" id="circle">
+                        <img src="icons/circle.svg" alt="">
+                        <span>Circle</span>
+                    </div>
+                    <div class="option tool row" id="triangle">
+                        <img src="icons/triangle.svg" alt="">
+                        <span>Triangle</span>
+                    </div>
+                    <div class="option row">
+                        <input type="checkbox" id="fill-color">
+                        <label for="fill-color">Fill color</label>
+                    </div>
+                    <div class="option active tool row" id="brush">
+                        <img src="icons/brush.svg" alt="">
+                        <span>Brush</span>
+                    </div>
+                    <div class="option tool row" id="eraser">
+                        <img src="icons/eraser.svg" alt="">
+                        <span>Eraser</span>
+                    </div>
+                </div>
+
+                <div class="options col-2">
+
+
+                    <div class="option">
+                        <input type="range" id="size-slider" min="1" max="30" value="5">
+                    </div>
+                </div>
+
+                <div class="buttons col-2 sm-2">
+                    <button class="clear-canvas">Clear Canvas</button>
+                    <button class="save-img">Save As Image</button>
+                </div>
+
+            </div>
+
+
+
+        </div>
+        <section class="drawing-board">
+            <canvas width="810" height="512"></canvas>
+        </section>
+    </div>
+
+
+
+</body>
+
+</html>
