@@ -1,0 +1,9 @@
+.overlay {
+    display: none;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    padding: 10px;
+    border-radius: 5px;
+    color: #fff;
+}

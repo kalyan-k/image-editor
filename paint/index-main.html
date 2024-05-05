@@ -1,0 +1,122 @@
+<html>
+
+<head>
+    <script type="text/javascript" src="/___vscode_livepreview_injected_script"></script>
+    <script type="text/javascript" src="/___vscode_livepreview_injected_script"></script>
+    <script type="text/javascript" src="/___vscode_livepreview_injected_script"></script>
+    <title>Test</title>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body class="" style="background-color: #cecece;">
+    <div class="container-fluid text-center">
+        <div class="">
+            <div class="row my-3 mx-3 rounded-3 bg-light justify-content-center align-content-center"
+                style="height: 50px;">
+                <div class="col-2">
+                </div>
+
+                <div class="col-8 row">
+                    <div class="option tool col" id="rectangle" onclick="showOverlay(this)">
+                        <img src="icons/rectangle.svg" alt="">
+                        <span>Rectangle</span>
+                    </div>
+                    <div class="option tool col" id="circle" onclick="showOverlay(this)">
+                        <img src="icons/circle.svg" alt="">
+                        <span>Circle</span>
+                    </div>
+                    <div class="option tool col" id="triangle" onclick="showOverlay(this)">
+                        <img src="icons/triangle.svg" alt="">
+                        <span>Triangle</span>
+                    </div>
+                    <div class="option col">
+                        <input type="checkbox" id="fill-color">
+                        <label for="fill-color">Fill color</label>
+                    </div>
+                    <div class="option active tool col" id="brush" onclick="showOverlay(this)">
+                        <img src="icons/brush.svg" alt="">
+                        <span>Brush</span>
+                    </div>
+                    <div class="option tool col" id="eraser">
+                        <img src="icons/eraser.svg" alt="">
+                        <span>Eraser</span>
+                    </div>
+                </div>
+
+                <div class="buttons col-2">
+                    <div class="float-end">
+                        <button class="clear-canvas">Clear Canvas</button>
+                        <button class="save-img">Save As Image</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row my-3 mx-3 rounded-3 bg-light drawing-board" style="height: 85vh;" id="canvasDiv">
+                <div class="col">
+                    <canvas id="myCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay" onclick="hideOverlay()">
+        <div class="overlay-content" id="overlay-content">
+            <div class="modal-content">
+                <button type="button" class="close" aria-label="Close" onclick="hideOverlay()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <div class="row colors">
+                    <label class="title">Colors</label>
+                    <ul class="options">
+                        <li class="option"></li>
+                        <li class="option selected"></li>
+                        <li class="option"></li>
+                        <li class="option"></li>
+                        <li class="option">
+                            <input type="color" id="color-picker" value="#4A98F7">
+                        </li>
+                    </ul>
+                </div>
+                <div class="option">
+                    <input type="range" id="size-slider" min="1" max="30" value="5">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showOverlay(clickedItem) {
+            var overlay = document.getElementById('overlay');
+            var overlayContent = document.getElementById('overlay-content');
+
+            // Position the overlay near the clicked list item
+            overlay.style.display = 'block';
+            overlay.style.top = (clickedItem.offsetTop + clickedItem.offsetHeight + 10) + 'px';
+            overlay.style.left = clickedItem.offsetLeft + 'px';
+
+            // You can also dynamically change the content of the overlay here
+        }
+
+        function hideOverlay() {
+            //document.querySelector('.overlay').style.display = 'none';
+        }
+
+        function changeCanvas() {
+            var canvas = document.getElementById("myCanvas");
+            var canvasDiv = document.getElementById("canvasDiv");
+            canvas.width = canvasDiv.clientWidth;
+            canvas.height = canvasDiv.clientHeight;
+        }
+
+        window.onload = function () {
+            changeCanvas();
+        };
+
+        window.onresize = function () {
+            changeCanvas();
+        };
+    </script>
+</body>
+
+</html>
